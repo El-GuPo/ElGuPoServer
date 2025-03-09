@@ -8,33 +8,34 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Getter @Setter @NoArgsConstructor
-@Data
-@Table(name="users", schema = "public")
+@Getter
+@Setter
+@NoArgsConstructor
+@Table(name = "users", schema = "public")
 @Entity
 public class User implements UserDetails {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name="id")
+    @Column(name = "id")
     private Integer id;
 
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
 
-    @Column(name="surname")
+    @Column(name = "surname")
     private String surname;
 
-    @Column(name="age")
+    @Column(name = "age")
     private Integer age;
 
-    @Column(name="email")
+    @Column(name = "email")
     private String email;
 
-    @Column(name="hashed_password")
+    @Column(name = "hashed_password")
     private String hashedPassword;
 
-    @Column(name="salt")
+    @Column(name = "salt")
     private String salt;
 
     @Override
