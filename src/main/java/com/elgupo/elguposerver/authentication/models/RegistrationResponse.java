@@ -9,4 +9,6 @@ public class RegistrationResponse implements Serializable {
     public String email;
 
     public int id;
+
+    public String message;
 }

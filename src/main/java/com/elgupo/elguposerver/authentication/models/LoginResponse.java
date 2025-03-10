@@ -9,4 +9,6 @@ public class LoginResponse {
     public int id;
 
     public boolean isProfileFilledOut;
+
+    public String message;
 }
