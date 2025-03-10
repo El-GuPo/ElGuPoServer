@@ -1,5 +1,9 @@
 package com.elgupo.elguposerver.authentication.services;
 
+import com.elgupo.elguposerver.authentication.exceptions.BadEmailException;
+import com.elgupo.elguposerver.authentication.exceptions.BadPasswordException;
+import com.elgupo.elguposerver.authentication.exceptions.EmailAlreadyInUseException;
+import com.elgupo.elguposerver.authentication.exceptions.NotMatchingPasswordsException;
 import com.elgupo.elguposerver.authentication.models.LoginRequest;
 import com.elgupo.elguposerver.authentication.models.LoginResponse;
 import com.elgupo.elguposerver.authentication.models.RegistrationRequest;
@@ -10,7 +14,6 @@ import com.elgupo.elguposerver.hashing.PasswordHasher;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,17 +29,17 @@ public class AuthenticationService {
 
         if (!emailValidator.isValid(registrationRequest.email)) {
             log.info("Invalid email address: {}", registrationRequest.email);
-            throw new BadCredentialsException("Invalid email address");
+            throw new BadEmailException();
         }
 
         if (userRepository.existsByEmail(registrationRequest.email)) {
             log.info("Email already exists");
-            throw new BadCredentialsException("This email address is already in use");
+            throw new EmailAlreadyInUseException();
         }
 
         if (!registrationRequest.password.equals(registrationRequest.confirmPassword)) {
             log.info("Passwords do not match");
-            throw new BadCredentialsException("Passwords do not match");
+            throw new NotMatchingPasswordsException();
         }
 
         String salt = PasswordHasher.genSalt();
@@ -60,14 +63,14 @@ public class AuthenticationService {
 
         if (!emailValidator.isValid(loginRequest.email)) {
             log.info("Invalid email address: {}", loginRequest.email);
-            throw new BadCredentialsException("Invalid email address");
+            throw new BadEmailException();
         }
 
         User user = userRepository.findByEmail(loginRequest.email);
 
         if (user == null) {
             log.info("User with email {} not found", loginRequest.email);
-            throw new BadCredentialsException("Invalid email or password");
+            throw new BadEmailException();
         }
 
         if (user.getPassword().equals(PasswordHasher.hashPassword(loginRequest.password, user.getSalt()))) {
@@ -79,7 +82,7 @@ public class AuthenticationService {
                     "OK"
             );
         }
-        throw new BadCredentialsException("Invalid email or password");
+        throw new BadPasswordException();
     }
 
 }
