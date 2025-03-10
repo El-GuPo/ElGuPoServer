@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ElGuPoServerApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ElGuPoServerApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ElGuPoServerApplication.class, args);
+    }
 
 }
