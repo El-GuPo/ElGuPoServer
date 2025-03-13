@@ -17,8 +17,23 @@ import com.elgupo.elguposerver.dataclasses.Place;
 import javax.xml.crypto.Data;
 
 public class PostRequester {
+
     private final static String commonURL = "https://api.afisha7.ru/v3.1/";
-    private final static String commonURLParameters = "APIKey=bdea8eea2845195c0870&org=1048&token=387b59015b331a2c38746513941261ee&loc_url=sankt-peterbyrg&loc_id=203";
+    private static String commonURLParameters = "org=1048&loc_url=sankt-peterbyrg&loc_id=203";
+    static {
+        try (FileReader tokenReader = new FileReader("src/main/java/com/elgupo/elguposerver/postrequester/token.txt")) {
+            BufferedReader reader = new BufferedReader(tokenReader);
+            commonURLParameters += "&token=" + reader.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try (FileReader APIKeyReader = new FileReader("src/main/java/com/elgupo/elguposerver/postrequester/APIKey.txt")) {
+            BufferedReader reader = new BufferedReader(APIKeyReader);
+            commonURLParameters += "&APIKey=" + reader.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private static Map getStringBuilder(String urlAdditional, String parametersAdditional) throws IOException, InterruptedException {
         URI url = URI.create(commonURL + urlAdditional);
@@ -37,7 +52,7 @@ public class PostRequester {
     }
 
     @SuppressWarnings({"unchecked cast", "rawtypes"})
-    public static List<Place> getPlacesNearby(Double latitude, Double longitude, int count, int radius) throws IOException, JSONException, InterruptedException {
+    public static List<Place> getPlacesNearby(Double latitude, Double longitude, int count, Double radius) throws IOException, JSONException, InterruptedException {
         ArrayList<Place> places = new ArrayList<>();
         for (Category category : Category.CATEGORIES) {
             Map response = getStringBuilder("places/", "&cat_id=" + category.getId().toString());
