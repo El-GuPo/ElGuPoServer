@@ -7,7 +7,7 @@ import java.util.ArrayList;
 @Getter
 public class Category {
     private final String title;
-    private final int id;
+    private final Integer id;
 
     public Category(String title, int id) {
         this.title = title;
@@ -23,7 +23,7 @@ public class Category {
 
     public static Category[] CATEGORIES = {CINEMA, SPORT, EXHIBITION, CONCERTS, THEATER};
 
-    public Category getCategoryById(int id) {
+    public static Category getCategoryById(int id) {
         for (Category category : CATEGORIES) {
             if (id == category.id) {
                 return category;
