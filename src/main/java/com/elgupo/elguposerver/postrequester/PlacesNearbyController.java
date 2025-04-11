@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 @RestController
 public class PlacesNearbyController {
@@ -17,7 +18,7 @@ public class PlacesNearbyController {
             @RequestParam Double longitude,
             @RequestParam int count,
             @RequestParam Double radius
-    ) throws IOException, InterruptedException {
+    ) throws IOException, InterruptedException, DataFormatException {
         return PostRequester.getPlacesNearby(latitude, longitude, count, radius);
     }
 }
