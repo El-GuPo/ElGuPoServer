@@ -54,6 +54,7 @@ public class PostRequester {
     @SuppressWarnings({"unchecked cast", "rawtypes"})
     public static List<Place> getPlacesNearby(Double latitude, Double longitude, int count, Double radius) throws IOException, JSONException, InterruptedException {
         ArrayList<Place> places = new ArrayList<>();
+        TreeSet<Integer> ids = new TreeSet<>();
         for (Category category : Category.CATEGORIES) {
             Map response = getStringBuilder("places/", "&cat_id=" + category.getId().toString());
 
@@ -66,32 +67,44 @@ public class PostRequester {
                 } catch (DataFormatException e) {
                     continue;
                 }
+                if (ids.contains(place.getId())) continue;
+                ids.add(place.getId());
                 places.add(place);
             }
         }
 
         places = (ArrayList<Place>) places.stream()
                 .filter(p -> Math.pow(p.getLatitude() - latitude, 2) + Math.pow(p.getLongitude() - longitude, 2) < Math.pow(radius, 2))
+                .sorted(Comparator.comparingDouble(p ->
+                        Math.pow(p.getLatitude() - latitude, 2) + Math.pow(p.getLongitude() - longitude, 2)))
+                .limit(10)
                 .collect(Collectors.toList());
-        places.sort(Comparator.comparingDouble(p ->
-                Math.pow(p.getLatitude() - latitude, 2) + Math.pow(p.getLongitude() - longitude, 2)));
-        List<Place> result = places.subList(0, Math.min(count, places.size()));
-        for (Place place : result) {
+        List<Place> result = new ArrayList<>();
+        for (Place place : places) {
             Map responseEvents = getStringBuilder("evs/", "&places_id=" + place.getId().toString());
             if (!responseEvents.containsKey("events")) {
                 continue;
             }
             Event event = null;
-            try {
-                List<Map<String, String>> dataEvents = (List<Map<String, String>>) responseEvents.get("events");
-                for (Map dataEvent : dataEvents) {
+            List<Map<String, String>> dataEvents = (List<Map<String, String>>) responseEvents.get("events");
+            for (Map dataEvent : dataEvents) {
+                try {
                     event = new Event(dataEvent);
+                } catch (DataFormatException e) {
+                    continue;
                 }
-            } catch (DataFormatException e) {
-                continue;
+                place.addEvent(event);
             }
-            place.addEvent(event);
+            if (!place.getEvents().isEmpty()) {
+                result.add(place);
+            }
         }
         return result;
+    }
+    public static void main(String[] args) throws IOException, InterruptedException {
+        List<Place> places = getPlacesNearby(55.75, 37.61, 10, 5.0);
+        for (Place p : places) {
+            System.out.println(p.getEvents().size());
+        }
     }
 }
