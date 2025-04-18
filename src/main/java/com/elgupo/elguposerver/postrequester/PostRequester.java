@@ -53,13 +53,14 @@ public class PostRequester {
 
     @SuppressWarnings({"unchecked cast", "rawtypes"})
     public static List<Place> getPlacesNearby(Double latitude, Double longitude, int count, Double radius) throws IOException, JSONException, InterruptedException {
-        ArrayList<Place> places = new ArrayList<>();
-        TreeSet<Integer> ids = new TreeSet<>();
+        HashMap<Integer, Place> places = new HashMap<>();
         for (Category category : Category.CATEGORIES) {
             Map response = getStringBuilder("places/", "&cat_id=" + category.getId().toString());
 
             List<Map<String, String>> data = (List<Map<String, String>>) response.get("places");
-
+            if (data == null) {
+                continue;
+            }
             for (Map placeData : data) {
                 Place place;
                 try {
@@ -67,44 +68,59 @@ public class PostRequester {
                 } catch (DataFormatException e) {
                     continue;
                 }
-                if (ids.contains(place.getId())) continue;
-                ids.add(place.getId());
-                places.add(place);
+                if (places.containsKey(place.getId())) continue;
+                if (Math.pow(place.getLatitude() - latitude, 2) + Math.pow(place.getLongitude() - longitude, 2) >= Math.pow(radius, 2)) continue;
+                places.put(place.getId(), place);
             }
         }
-
-        places = (ArrayList<Place>) places.stream()
-                .filter(p -> Math.pow(p.getLatitude() - latitude, 2) + Math.pow(p.getLongitude() - longitude, 2) < Math.pow(radius, 2))
-                .sorted(Comparator.comparingDouble(p ->
-                        Math.pow(p.getLatitude() - latitude, 2) + Math.pow(p.getLongitude() - longitude, 2)))
-                .limit(10)
-                .collect(Collectors.toList());
-        List<Place> result = new ArrayList<>();
-        for (Place place : places) {
-            Map responseEvents = getStringBuilder("evs/", "&places_id=" + place.getId().toString());
-            if (!responseEvents.containsKey("events")) {
+        int i = 0;
+        List<Map<String, String>> dataEvents = new ArrayList<>();
+        Map responseEvents = getStringBuilder("events/", "&limit=0");
+        Integer total = Integer.parseInt((String) responseEvents.getOrDefault("total", "0"));
+        while (i * 100 < total) {
+            responseEvents = getStringBuilder("events/", "&limit=100&offset=" + i * 100);
+            i++;
+            if (!responseEvents.containsKey("events") || responseEvents.get("events") == null) {
+                break;
+            }
+            dataEvents.addAll((List) responseEvents.get("events"));
+        }
+        Event event = null;
+        for (Map dataEvent : dataEvents) {
+            try {
+                event = new Event(dataEvent);
+            } catch (DataFormatException e) {
                 continue;
             }
-            Event event = null;
-            List<Map<String, String>> dataEvents = (List<Map<String, String>>) responseEvents.get("events");
-            for (Map dataEvent : dataEvents) {
+            if (!dataEvent.containsKey("places")) continue;
+            List<Map> eventPlaces = (List) dataEvent.get("places");
+            for (Map place : eventPlaces) {
+                String link = (String) place.getOrDefault("link", "");
                 try {
-                    event = new Event(dataEvent);
-                } catch (DataFormatException e) {
+                    String id = (String) link.subSequence(link.lastIndexOf('/') + 1, link.length() - 2);
+                    places.get(Integer.parseInt(id)).addEvent(event);
+                }catch(Exception E) {
                     continue;
                 }
-                place.addEvent(event);
             }
+        }
+        List<Place> result = new ArrayList<>();
+        for (Place place : places.values()) {
             if (!place.getEvents().isEmpty()) {
                 result.add(place);
             }
         }
-        return result;
+        return result.stream().
+                sorted(Comparator.comparingDouble(p ->
+                        Math.pow(p.getLatitude() - latitude, 2) + Math.pow(p.getLongitude() - longitude, 2)))
+                .limit(count)
+                .toList();
     }
-    public static void main(String[] args) throws IOException, InterruptedException {
-        List<Place> places = getPlacesNearby(55.75, 37.61, 10, 5.0);
+
+    public static void main(String[] args) throws IOException, InterruptedException, DataFormatException {
+        List<Place> places = getPlacesNearby(0.0, 0.0, 100000000, 10000.0);
         for (Place p : places) {
-            System.out.println(p.getEvents().size());
+            System.out.println(p.getId());
         }
     }
 }
