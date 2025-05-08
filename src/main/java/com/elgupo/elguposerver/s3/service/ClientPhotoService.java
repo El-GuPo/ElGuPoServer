@@ -1,18 +1,15 @@
 package com.elgupo.elguposerver.s3.service;
 
-import com.elgupo.elguposerver.s3.model.UserPhoto;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.io.IOException;
+import java.net.URL;
 
 public interface ClientPhotoService {
 
-    void create(UserPhoto userPhoto);
+    URL getPhoto(Long id);
 
-    List<UserPhoto> readAll();
+    URL uploadPhoto(Long userId, MultipartFile photo) throws IOException;
 
-    UserPhoto read(Long id);
-
-    boolean update(UserPhoto userPhoto, Long id);
-
-    boolean delete(Long id);
+    boolean deletePhoto(Long userID);
 }
