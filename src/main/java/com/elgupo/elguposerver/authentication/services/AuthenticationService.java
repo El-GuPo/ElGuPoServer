@@ -4,10 +4,7 @@ import com.elgupo.elguposerver.authentication.exceptions.BadEmailException;
 import com.elgupo.elguposerver.authentication.exceptions.BadPasswordException;
 import com.elgupo.elguposerver.authentication.exceptions.EmailAlreadyInUseException;
 import com.elgupo.elguposerver.authentication.exceptions.NotMatchingPasswordsException;
-import com.elgupo.elguposerver.authentication.models.LoginRequest;
-import com.elgupo.elguposerver.authentication.models.LoginResponse;
-import com.elgupo.elguposerver.authentication.models.RegistrationRequest;
-import com.elgupo.elguposerver.authentication.models.RegistrationResponse;
+import com.elgupo.elguposerver.authentication.models.*;
 import com.elgupo.elguposerver.database.models.User;
 import com.elgupo.elguposerver.database.repositories.UserRepository;
 import com.elgupo.elguposerver.hashing.PasswordHasher;
@@ -83,6 +80,15 @@ public class AuthenticationService {
             );
         }
         throw new BadPasswordException();
+    }
+
+    public CheckEmailResponse checkEmail(CheckEmailRequest checkEmailRequest) {
+        User user = userRepository.findByEmail(checkEmailRequest.email);
+
+        if (user == null) {
+            return new CheckEmailResponse(false);
+        }
+        return new CheckEmailResponse(true);
     }
 
 }
