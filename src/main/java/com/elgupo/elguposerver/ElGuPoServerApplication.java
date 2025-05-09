@@ -2,11 +2,13 @@ package com.elgupo.elguposerver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.elgupo.elguposerver.postrequester.*;
 
 @SpringBootApplication
 public class ElGuPoServerApplication {
 
     public static void main(String[] args) {
+        ActualEventsHolder.getInstance();
         SpringApplication.run(ElGuPoServerApplication.class, args);
     }
 
