@@ -29,6 +29,20 @@ public class PostRequester {
                 .toList();
     }
 
+    public static HashMap<Category, List<Event>> getEventsByCategories() {
+        List<Place> data = ActualEventsHolder.getInstance().getEvents().getData();
+        HashMap<Category, List<Event>> result = new HashMap<>();
+        for (Category cat : Category.CATEGORIES) {
+            result.put(cat, new ArrayList<>());
+        }
+        for (Place place : data) {
+            for (Event event : place.getEvents()) {
+                result.get(Category.getCategoryById(event.getCatId())).add(event);
+            }
+        }
+        return result;
+    }
+
     public static void main(String[] args) throws IOException, InterruptedException, DataFormatException {
         List<Place> places = getPlacesNearby(0.0, 0.0, 100000000, 10000.0);
         for (Place p : places) {

@@ -13,7 +13,7 @@ import java.util.zip.DataFormatException;
 @RestController
 public class PlacesNearbyController {
     @GetMapping("/places-nearby")
-    public synchronized List<Place> getPlaces (
+    public List<Place> getPlaces (
             @RequestParam Double latitude,
             @RequestParam Double longitude,
             @RequestParam int count,

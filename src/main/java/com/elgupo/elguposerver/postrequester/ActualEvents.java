@@ -110,7 +110,7 @@ class ActualEvents {
                 try {
                     String id = (String) link.subSequence(link.lastIndexOf('/') + 1, link.length() - 2);
                     places.get(Integer.parseInt(id)).addEvent(event);
-
+                    event.addAdress(places.get(Integer.parseInt(id)).getAdress());
                 }catch(Exception E) {
                     continue;
                 }
