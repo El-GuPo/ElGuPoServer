@@ -3,6 +3,7 @@ package com.elgupo.elguposerver.dataclasses;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Getter
 public class Category {
@@ -30,5 +31,9 @@ public class Category {
             }
         }
         return NOCATEGORY;
+    }
+
+    public int hashCode() {
+        return id.hashCode();
     }
 }
