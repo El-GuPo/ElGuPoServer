@@ -1,4 +1,0 @@
-CREATE TABLE IF NOT EXISTS user_photos (
-    id BIGSERIAL PRIMARY KEY,
-    photo_url VARCHAR(255) NOT NULL
-);

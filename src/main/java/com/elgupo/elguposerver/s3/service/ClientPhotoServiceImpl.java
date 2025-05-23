@@ -1,5 +1,8 @@
 package com.elgupo.elguposerver.s3.service;
 
+import com.elgupo.elguposerver.s3.exceptions.BadRequestException;
+import com.elgupo.elguposerver.s3.exceptions.InternalServerException;
+import com.elgupo.elguposerver.s3.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,9 +17,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
@@ -60,11 +61,17 @@ public class ClientPhotoServiceImpl implements ClientPhotoService {
     }
 
     @Override
-    public URL getPhoto(Long userID) {
+    public URL getPhoto(Long userID) throws NotFoundException {
         /*
             Need validator, everybody can get photo
          */
-        return createPresignedGetURL(getPath(userID));
+        String key = getPath(userID);
+        try{
+            s3Client.headObject(builder -> builder.bucket(BUCKET).key(getPath(userID)));
+            return createPresignedGetURL(getPath(userID));
+        } catch(NoSuchKeyException e){
+            throw new NotFoundException("Photo not found for user: " + userID);
+        }
     }
 
     @Override
@@ -72,20 +79,19 @@ public class ClientPhotoServiceImpl implements ClientPhotoService {
         /*
             Need validator user should be able to put photo
          */
+        validateFile(photo);
         String key = getPath(userId);
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(BUCKET)
                 .key(key)
                 .contentType(photo.getContentType())
                 .build();
-
         s3Client.putObject(putObjectRequest, RequestBody.fromBytes(photo.getBytes()));
-
         return createPresignedGetURL(key);
     }
 
     @Override
-    public boolean deletePhoto(Long userID) {
+    public boolean deletePhoto(Long userID) throws InternalServerException {
         /*
             Need validator, same validation as in put
          */
@@ -96,19 +102,19 @@ public class ClientPhotoServiceImpl implements ClientPhotoService {
                 .build();
 
         try {
+            s3Client.headObject(builder -> builder.bucket(BUCKET).key(getPath(userID)));
             s3Client.deleteObject(deleteObjectRequest);
             return true;
-        } catch (AwsServiceException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.valueOf(e.statusCode()),
-                    "S3 error: " + e.awsErrorDetails().errorMessage()
-            );
+        } catch (NoSuchKeyException e) {
+            return false;
+        } catch (S3Exception e) {
+            throw new InternalServerException("S3 error: " + e.getMessage());
+        }
+    }
 
-        } catch (SdkClientException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.SERVICE_UNAVAILABLE,
-                    "S3 client error: " + e.getMessage()
-            );
+    private void validateFile(MultipartFile file) throws BadRequestException{
+        if (file.getContentType() == null || !file.getContentType().startsWith("image/")) {
+            throw new BadRequestException("Invalid file");
         }
     }
 
