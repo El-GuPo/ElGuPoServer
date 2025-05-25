@@ -8,3 +8,10 @@ CREATE TABLE IF NOT EXISTS users
     hashed_password VARCHAR(254) NOT NULL ,
     salt VARCHAR(254) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS likes
+(
+    id    BIGSERIAL PRIMARY KEY ,
+    userId BIGSERIAL,
+    eventId BIGSERIAL
+    );
