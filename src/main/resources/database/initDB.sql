@@ -5,13 +5,26 @@ CREATE TABLE IF NOT EXISTS users
     surname  VARCHAR(200) ,
     age INT8 ,
     email VARCHAR(254) NOT NULL ,
+    sex VARCHAR(254),
+    description TEXT,
     hashed_password VARCHAR(254) NOT NULL ,
     salt VARCHAR(254) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS likes
+CREATE TABLE IF NOT EXISTS likes_events
 (
     id    BIGSERIAL PRIMARY KEY ,
     userId BIGSERIAL,
-    eventId BIGSERIAL
+    eventId BIGSERIAL,
+    catId BIGSERIAL
     );
+
+CREATE TABLE IF NOT EXISTS likes_users
+(
+    id BIGSERIAL PRIMARY KEY ,
+    liker BIGSERIAL,
+    userLikeable BIGSERIAL,
+    matchStatus BOOLEAN,
+    eventId BIGSERIAL
+);
+

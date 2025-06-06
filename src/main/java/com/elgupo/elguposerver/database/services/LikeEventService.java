@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,10 +22,16 @@ public class LikeEventService {
     public LikeEventResponse likeEvent(LikeEventRequest likeEventRequest) {
         LikeEventEntry likeEventEntry = new LikeEventEntry(
                 likeEventRequest.getUserId(),
-                likeEventRequest.getEventId()
+                likeEventRequest.getEventId(),
+                likeEventRequest.getCatId()
         );
         likeEventRepository.save(likeEventEntry);
-        return new LikeEventResponse();
+        return new LikeEventResponse(
+            likeEventRequest.getUserId(),
+            likeEventRequest.getEventId(),
+            likeEventRequest.getCatId(),
+            "OK"
+        );
     }
 
     public List<Long> getLikedEvents(Long userId) {
@@ -34,5 +41,17 @@ public class LikeEventService {
 
     public List<Long> getCommonEvents(Long userId1, Long userId2) {
         return likeEventRepository.findCommonEventsByUsersId(userId1, userId2);
+    }
+
+    public Set<Long> getCats(Long userId) {
+        return likeEventRepository.findAllCatIdsByUserId(userId);
+    }
+
+    public List<Long> getUsers(Long eventId) {
+        return likeEventRepository.findAllUserIdsByEventId(eventId);
+    }
+
+    public Long getCountByUserIdAndCatId(Long userId, Long catId) {
+        return likeEventRepository.countByUserIdAndCatId(userId, catId);
     }
 }

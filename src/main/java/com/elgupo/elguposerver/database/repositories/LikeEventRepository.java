@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Set;
 
 public interface LikeEventRepository extends CrudRepository<LikeEventEntry, Integer> {
 
@@ -18,4 +19,12 @@ public interface LikeEventRepository extends CrudRepository<LikeEventEntry, Inte
             @Param("userId1") Long userId1,
             @Param("userId2") Long userId2
     );
+
+    @Query("SELECT l.catId FROM LikeEventEntry l WHERE l.userId = :userId")
+    Set<Long> findAllCatIdsByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT l.userId FROM LikeEventEntry l where l.eventId = :eventId")
+    List<Long> findAllUserIdsByEventId(@Param("eventId") Long eventId);
+
+    Long countByUserIdAndCatId(Long userId, Long catId);
 }

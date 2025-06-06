@@ -12,4 +12,6 @@ public class LikeEventRequest {
     Long eventId;
 
     Long userId;
+
+    Long catId;
 }

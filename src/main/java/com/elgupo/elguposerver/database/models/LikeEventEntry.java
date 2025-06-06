@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "likes", schema = "public")
+@Table(name = "likes_events", schema = "public")
 @Entity
 public class LikeEventEntry {
 
@@ -25,8 +25,17 @@ public class LikeEventEntry {
     @Column(name = "eventId")
     private Long eventId;
 
+    @Column(name = "catId")
+    private Long catId;
+
     public LikeEventEntry(final Long userId, final Long eventId) {
         this.userId = userId;
         this.eventId = eventId;
+    }
+
+    public LikeEventEntry(final Long userId, final Long eventId, final Long catId) {
+        this.userId = userId;
+        this.eventId = eventId;
+        this.catId = catId;
     }
 }
