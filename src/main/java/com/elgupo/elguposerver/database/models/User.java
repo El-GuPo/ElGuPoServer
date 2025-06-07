@@ -44,6 +44,9 @@ public class User implements UserDetails {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "telegram_tag")
+    private String telegramTag;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();

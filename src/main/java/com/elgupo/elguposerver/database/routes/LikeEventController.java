@@ -21,8 +21,8 @@ public class LikeEventController {
         this.likeEventService = likeEventService;
     }
 
-    @PostMapping("/like")
-    public ResponseEntity<LikeEventResponse> like(@RequestBody LikeEventRequest likeEventRequest) {
+    @PostMapping("/like_event")
+    public ResponseEntity<LikeEventResponse> likeEvent(@RequestBody LikeEventRequest likeEventRequest) {
         log.info("Like event: {}", likeEventRequest);
         return ResponseEntity.ok(likeEventService.likeEvent(likeEventRequest));
     }
