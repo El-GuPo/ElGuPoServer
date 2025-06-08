@@ -27,27 +27,27 @@ public class LikeEventController {
         return ResponseEntity.ok(likeEventService.likeEvent(likeEventRequest));
     }
 
-    @GetMapping("/user/{userId}/events")
+    @GetMapping("/like_events/user/{userId}/events")
     public List<Long> getLikedEvents(@PathVariable Long userId) {
         return likeEventService.getLikedEvents(userId);
     }
 
-    @GetMapping("/user/{userId1}/common_events/{userId2}")
+    @GetMapping("/like_events/user/{userId1}/common_events/{userId2}")
     public List<Long> getCommonEvents(@PathVariable Long userId1, @PathVariable Long userId2) {
         return likeEventService.getCommonEvents(userId1, userId2);
     }
 
-    @GetMapping("/user/{userId}/cats")
+    @GetMapping("/like_events/user/{userId}/cats")
     public Set<Long> getCats(@PathVariable Long userId) {
         return likeEventService.getCats(userId);
     }
 
-    @GetMapping("/event/{eventId}/get_users")
+    @GetMapping("/like_events/event/{eventId}/get_users")
     public List<Long> getUsers(@PathVariable Long eventId) {
         return likeEventService.getUsers(eventId);
     }
 
-    @GetMapping("/user/{userId}/get_count/{catId}")
+    @GetMapping("/like_events/user/{userId}/get_count/{catId}")
     public Long getCountByUserIdAndCatId(@PathVariable Long userId, @PathVariable Long catId) {
         return likeEventService.getCountByUserIdAndCatId(userId, catId);
     }

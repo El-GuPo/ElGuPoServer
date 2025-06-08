@@ -5,6 +5,7 @@ import com.elgupo.elguposerver.database.models.LikeUserEntry;
 import com.elgupo.elguposerver.database.models.LikeUserRequest;
 import com.elgupo.elguposerver.database.models.LikeUserResponse;
 import com.elgupo.elguposerver.database.repositories.LikeUserRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,5 +51,18 @@ public class LikeUserService {
 
     public List<Long> getLikes(Long user, Long event, boolean like) {
         return likeUserRepository.getLikes(user, event, like);
+    }
+
+    @Transactional
+    public boolean deleteLikeUsers(Long eventId) {
+        if (!likeUserRepository.existsByEventId(eventId)) {
+            return false;
+        }
+        likeUserRepository.deleteAllByEventId(eventId);
+        return true;
+    }
+
+    public List<Long> getDistinctEvents() {
+        return likeUserRepository.findAllDistinctEventIds();
     }
 }
