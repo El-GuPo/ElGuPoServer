@@ -26,18 +26,28 @@ public class LikeUserController {
         return ResponseEntity.ok(likeUserService.likeUser(likeUserRequest));
     }
 
-    @GetMapping("/get_like")
+    @GetMapping("/like_users/get_like")
     public ResponseEntity<GetLikeResponse> getLike(@RequestParam Long likerId, @RequestParam Long likeableId, @RequestParam Long eventId) {
         return ResponseEntity.ok(likeUserService.getLike(likerId, likeableId, eventId));
     }
 
-    @GetMapping("/get_dislike")
+    @GetMapping("/like_users/get_dislike")
     public boolean wasDislike(@RequestParam Long user1, @RequestParam Long user2) {
         return likeUserService.wasDislike(user1, user2);
     }
 
-    @GetMapping("/get_likes")
+    @GetMapping("/like_users/get_likes")
     public List<Long> getLikes(@RequestParam Long user, @RequestParam Long event, @RequestParam boolean like) {
         return likeUserService.getLikes(user, event, like);
+    }
+
+    @DeleteMapping("/like_users/delete/{eventId}")
+    public boolean deleteLikeUsers(@PathVariable Long eventId) {
+        return likeUserService.deleteLikeUsers(eventId);
+    }
+
+    @GetMapping("like_users/distinct_events")
+    public List<Long> getDistinctEvents() {
+        return likeUserService.getDistinctEvents();
     }
 }

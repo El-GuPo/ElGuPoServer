@@ -23,4 +23,11 @@ public interface LikeUserRepository extends CrudRepository<LikeUserEntry, Intege
     @Query("SELECT l1.userLikeable FROM LikeUserEntry l1 " +
             "WHERE l1.eventId = :event AND l1.isLiked = :like AND l1.liker = :user")
     List<Long> getLikes(Long user, Long event, boolean like);
+
+    void deleteAllByEventId(Long eventId);
+
+    boolean existsByEventId(Long eventId);
+
+    @Query("SELECT DISTINCT e.eventId FROM LikeUserEntry e")
+    List<Long> findAllDistinctEventIds();
 }
