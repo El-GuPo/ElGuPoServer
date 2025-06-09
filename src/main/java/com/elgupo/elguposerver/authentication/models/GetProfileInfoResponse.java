@@ -16,4 +16,6 @@ public class GetProfileInfoResponse {
     public String description;
 
     public String telegramTag;
+
+    public String email;
 }

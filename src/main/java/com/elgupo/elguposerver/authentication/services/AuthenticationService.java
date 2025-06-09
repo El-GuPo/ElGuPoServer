@@ -120,7 +120,8 @@ public class AuthenticationService {
                 user.getName(),
                 user.getAge(),
                 user.getDescription(),
-                user.getTelegramTag()
+                user.getTelegramTag(),
+                user.getEmail()
         );
     }
 
