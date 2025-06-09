@@ -5,6 +5,7 @@ import com.elgupo.elguposerver.authentication.services.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,4 +37,13 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.checkEmail(checkEmailRequest));
     }
 
+    @PostMapping("/fill_profile")
+    public ResponseEntity<FillProfileResponse> fillProfile(@RequestBody FillProfileRequest fillProfileRequest) {
+        return ResponseEntity.ok(authenticationService.fillProfile(fillProfileRequest));
+    }
+
+    @GetMapping("/get_profile")
+    public ResponseEntity<GetProfileInfoResponse> getProfile(@RequestBody GetProfileInfoRequest getProfileInfoRequest) {
+        return ResponseEntity.ok(authenticationService.getProfile(getProfileInfoRequest));
+    }
 }

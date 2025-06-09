@@ -91,4 +91,35 @@ public class AuthenticationService {
         return new CheckEmailResponse(true);
     }
 
+    public FillProfileResponse fillProfile(FillProfileRequest fillProfileRequest) {
+        User user = userRepository.findUserById(fillProfileRequest.userId);
+        if (user == null) {
+            return new FillProfileResponse(-1L);
+        }
+        user.setName(fillProfileRequest.name);
+        user.setSurname(fillProfileRequest.surname);
+        user.setAge(fillProfileRequest.age);
+        user.setDescription(fillProfileRequest.description);
+        user.setSex(fillProfileRequest.getSex());
+        user.setTelegramTag(fillProfileRequest.telegramTag);
+
+        return new FillProfileResponse(fillProfileRequest.userId);
+    }
+
+    public GetProfileInfoResponse getProfile(GetProfileInfoRequest getProfileInfoRequest) {
+        User user = userRepository.findUserById(getProfileInfoRequest.userId);
+        if (user == null) {
+            return null;
+        }
+
+        return new GetProfileInfoResponse(
+                user.getSex(),
+                user.getName(),
+                user.getName(),
+                user.getAge(),
+                user.getDescription(),
+                user.getTelegramTag()
+        );
+    }
+
 }
