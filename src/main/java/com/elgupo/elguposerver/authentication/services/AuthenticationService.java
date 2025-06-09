@@ -108,8 +108,8 @@ public class AuthenticationService {
         return new FillProfileResponse(fillProfileRequest.userId);
     }
 
-    public GetProfileInfoResponse getProfile(GetProfileInfoRequest getProfileInfoRequest) {
-        User user = userRepository.findUserById(getProfileInfoRequest.userId);
+    public GetProfileInfoResponse getProfile(Long userId) {
+        User user = userRepository.findUserById(userId);
         if (user == null) {
             return null;
         }
