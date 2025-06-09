@@ -103,6 +103,8 @@ public class AuthenticationService {
         user.setSex(fillProfileRequest.getSex());
         user.setTelegramTag(fillProfileRequest.telegramTag);
 
+        userRepository.save(user);
+
         return new FillProfileResponse(fillProfileRequest.userId);
     }
 
