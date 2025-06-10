@@ -29,4 +29,6 @@ public interface LikeEventRepository extends CrudRepository<LikeEventEntry, Inte
     Long countByUserIdAndCatId(Long userId, Long catId);
 
     boolean existsByUserIdAndEventId(Long userId, Long eventId);
+
+    void deleteByUserIdAndEventId(Long userId, Long eventId);
 }

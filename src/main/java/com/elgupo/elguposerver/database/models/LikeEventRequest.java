@@ -14,4 +14,6 @@ public class LikeEventRequest {
     Long userId;
 
     Long catId;
+
+    Boolean liked;
 }
