@@ -4,6 +4,7 @@ import com.elgupo.elguposerver.database.models.LikeEventEntry;
 import com.elgupo.elguposerver.database.models.LikeEventRequest;
 import com.elgupo.elguposerver.database.models.LikeEventResponse;
 import com.elgupo.elguposerver.database.repositories.LikeEventRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,33 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LikeEventService {
 
-    @Autowired
-    private LikeEventRepository likeEventRepository;
+    private final LikeEventRepository likeEventRepository;
 
+    @Autowired
+    public LikeEventService(LikeEventRepository likeEventRepository) {
+        this.likeEventRepository = likeEventRepository;
+    }
+
+    @Transactional
     public LikeEventResponse likeEvent(LikeEventRequest likeEventRequest) {
+        if (!likeEventRequest.getLiked()) {
+            if (!likeEventRepository.existsByUserIdAndEventId(likeEventRequest.getUserId(), likeEventRequest.getEventId())) {
+                return new LikeEventResponse(
+                        likeEventRequest.getUserId(),
+                        likeEventRequest.getEventId(),
+                        likeEventRequest.getCatId(),
+                        "DOESN'T FIND"
+                );
+            }
+            likeEventRepository.deleteByUserIdAndEventId(likeEventRequest.getUserId(), likeEventRequest.getEventId());
+
+            return new LikeEventResponse(
+                    likeEventRequest.getUserId(),
+                    likeEventRequest.getEventId(),
+                    likeEventRequest.getCatId(),
+                    "DELETED"
+            );
+        }
         LikeEventEntry likeEventEntry = new LikeEventEntry(
                 likeEventRequest.getUserId(),
                 likeEventRequest.getEventId(),
