@@ -51,4 +51,9 @@ public class LikeEventController {
     public Long getCountByUserIdAndCatId(@PathVariable Long userId, @PathVariable Long catId) {
         return likeEventService.getCountByUserIdAndCatId(userId, catId);
     }
+
+    @GetMapping("/like_events/user/{userId}/event/{eventId}")
+    public boolean isEventLiked(@PathVariable Long userId, @PathVariable Long eventId) {
+        return likeEventService.isEventLiked(userId, eventId);
+    }
 }

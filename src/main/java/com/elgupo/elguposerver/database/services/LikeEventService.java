@@ -54,4 +54,8 @@ public class LikeEventService {
     public Long getCountByUserIdAndCatId(Long userId, Long catId) {
         return likeEventRepository.countByUserIdAndCatId(userId, catId);
     }
+
+    public boolean isEventLiked(Long userId, Long eventId) {
+        return likeEventRepository.existsByUserIdAndEventId(userId, eventId);
+    }
 }

@@ -27,4 +27,6 @@ public interface LikeEventRepository extends CrudRepository<LikeEventEntry, Inte
     List<Long> findAllUserIdsByEventId(@Param("eventId") Long eventId);
 
     Long countByUserIdAndCatId(Long userId, Long catId);
+
+    boolean existsByUserIdAndEventId(Long userId, Long eventId);
 }
