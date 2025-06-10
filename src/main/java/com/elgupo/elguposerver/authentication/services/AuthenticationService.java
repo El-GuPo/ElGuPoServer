@@ -117,7 +117,7 @@ public class AuthenticationService {
         return new GetProfileInfoResponse(
                 user.getSex(),
                 user.getName(),
-                user.getName(),
+                user.getSurname(),
                 user.getAge(),
                 user.getDescription(),
                 user.getTelegramTag(),
