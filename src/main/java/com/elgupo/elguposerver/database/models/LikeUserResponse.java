@@ -12,4 +12,5 @@ public class LikeUserResponse {
     private Long userLikeableId;
     private Long eventId;
     private boolean isLiked;
+    private boolean isMatch;
 }

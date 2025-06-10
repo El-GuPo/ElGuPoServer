@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 
+import ch.qos.logback.core.joran.sanity.Pair;
 import com.elgupo.elguposerver.dataclasses.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jdk.jfr.StackTrace;
@@ -29,24 +30,18 @@ public class PostRequester {
                 .toList();
     }
 
-    public static HashMap<Category, List<Event>> getEventsByCategories() {
+    public static HashMap<Integer, List<Event>> getEventsByCategories() {
         List<Place> data = ActualEventsHolder.getInstance().getEvents().getData();
-        HashMap<Category, List<Event>> result = new HashMap<>();
+        HashMap<Integer, List<Event>> result = new HashMap<>();
         for (Category cat : Category.CATEGORIES) {
-            result.put(cat, new ArrayList<>());
+            result.put(cat.getId(), new ArrayList<>());
         }
         for (Place place : data) {
             for (Event event : place.getEvents()) {
-                result.get(Category.getCategoryById(event.getCatId())).add(event);
+                if (!result.containsKey(event.getCatId())) continue;
+                result.get(event.getCatId()).add(event);
             }
         }
         return result;
-    }
-
-    public static void main(String[] args) throws IOException, InterruptedException, DataFormatException {
-        List<Place> places = getPlacesNearby(0.0, 0.0, 100000000, 10000.0);
-        for (Place p : places) {
-            System.out.println(p.getId());
-        }
     }
 }
