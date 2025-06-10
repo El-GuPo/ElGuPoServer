@@ -15,7 +15,7 @@ import java.util.zip.DataFormatException;
 @RestController
 public class EventsByCategoryController {
     @GetMapping("/events-by-category")
-    public HashMap<Category, List<Event>> getPlaces (){
+    public HashMap<Integer, List<Event>> getEvents (){
         return PostRequester.getEventsByCategories();
     }
 }

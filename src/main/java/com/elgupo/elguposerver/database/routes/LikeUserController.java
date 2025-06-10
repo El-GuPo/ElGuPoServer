@@ -2,6 +2,7 @@ package com.elgupo.elguposerver.database.routes;
 
 import com.elgupo.elguposerver.database.models.GetLikeResponse;
 import com.elgupo.elguposerver.database.models.LikeUserRequest;
+import com.elgupo.elguposerver.database.models.LikeUserResponse;
 import com.elgupo.elguposerver.database.services.LikeUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,8 @@ public class LikeUserController {
     }
 
     @PostMapping("/like_user")
-    public ResponseEntity<?> likeUser(@RequestBody LikeUserRequest likeUserRequest) {
+    public ResponseEntity<LikeUserResponse> likeUser(@RequestBody LikeUserRequest likeUserRequest) {
+        likeUserService.likeUser(likeUserRequest);
         return ResponseEntity.ok(likeUserService.likeUser(likeUserRequest));
     }
 
