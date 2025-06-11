@@ -9,16 +9,26 @@ import com.elgupo.elguposerver.dataclasses.Event;
 import com.elgupo.elguposerver.dataclasses.Place;
 import com.elgupo.elguposerver.postrequester.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Service
 public class TinderService {
+
+    private final UserRepository userRepository;
+    private final LikeEventService likeEventService;
+    private final LikeUserService likeUserService;
+
     @Autowired
-    private static UserRepository userRepository;
-    private static final LikeEventService likeEventService = new LikeEventService();
-    private static final LikeUserService likeUserService = new LikeUserService();
-    public static List<User> getCandidates(Long mainUserId, Long eventId, Integer minAge, Integer maxAge, String sex) {
+    public TinderService(UserRepository userRepository, LikeEventService likeEventService, LikeUserService likeUserService) {
+        this.userRepository = userRepository;
+        this.likeEventService = likeEventService;
+        this.likeUserService = likeUserService;
+    }
+
+    public List<User> getCandidates(Long mainUserId, Long eventId, Integer minAge, Integer maxAge, String sex) {
         List<Long> users = likeEventService.getUsers(eventId);
         users = users.stream()
                 .filter(u -> !Objects.equals(u, mainUserId) && !likeUserService.wasDislike(u, mainUserId) && !likeUserService.wasDislike(mainUserId, u))
@@ -52,7 +62,7 @@ public class TinderService {
                 .collect(Collectors.toList());
     }
 
-    public static List<User> getMatches(Long mainUserId, Long eventId) {
+    public List<User> getMatches(Long mainUserId, Long eventId) {
         List<Long> usersToCheck = likeUserService.getLikes(mainUserId, eventId, true);
         List<User> matches = new ArrayList<>();
         for (Long user : usersToCheck) {
@@ -65,7 +75,7 @@ public class TinderService {
         return matches;
     }
 
-    public static List<Event> getLikedEvents(Long userId) {
+    public List<Event> getLikedEvents(Long userId) {
         List<Long> eventsIds = likeEventService.getLikedEvents(userId);
         HashMap<Integer, List<Event>> actualEvents = PostRequester.getEventsByCategories();
         List<Event> allEvents = new ArrayList<>();
