@@ -40,11 +40,22 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'commons-validator:commons-validator:1.9.0'
+	testImplementation 'com.h2database:h2'
 
 	implementation 'software.amazon.awssdk:aws-sdk-java:2.29.33'
 	implementation 'software.amazon.awssdk:apache-client:2.29.33'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0' // for tests
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+}
+
+test {
+    jvmArgs = [
+        '-XX:+EnableDynamicAgentLoading',
+        "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('byte-buddy-agent') }}",
+        '-Xmx512m',
+        '-Xms256m'
+    ]
+    maxHeapSize = "512m"
 }
 
 tasks.named('test') {

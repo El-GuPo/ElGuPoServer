@@ -8,6 +8,7 @@ import com.elgupo.elguposerver.database.services.LikeUserService;
 import com.elgupo.elguposerver.dataclasses.Event;
 import com.elgupo.elguposerver.dataclasses.Place;
 import com.elgupo.elguposerver.postrequester.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class TinderService {
 
     private final UserRepository userRepository;
@@ -76,7 +78,9 @@ public class TinderService {
     }
 
     public List<Event> getLikedEvents(Long userId) {
+        log.info("user id is {}", userId);
         List<Long> eventsIds = likeEventService.getLikedEvents(userId);
+        log.info("events id is {}", eventsIds);
         HashMap<Integer, List<Event>> actualEvents = PostRequester.getEventsByCategories();
         List<Event> allEvents = new ArrayList<>();
         for (Integer cat : actualEvents.keySet()) {
@@ -88,6 +92,7 @@ public class TinderService {
                 likedEvents.add(event);
             }
         }
+        log.info("Likedevents is {}", likedEvents);
         return likedEvents;
     }
 }
