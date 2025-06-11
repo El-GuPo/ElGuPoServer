@@ -5,16 +5,20 @@ import com.elgupo.elguposerver.database.services.LikeUserService;
 import com.elgupo.elguposerver.dataclasses.Event;
 import com.elgupo.elguposerver.postrequester.ActualEventsHolder;
 import com.elgupo.elguposerver.postrequester.PostRequester;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
+@Service
 public class LikesCleaner {
     private static final Duration REFRESH_INTERVAL = Duration.ofHours(24);
-    private static final LikeUserService likeUserService = new LikeUserService();
+
+    @Autowired
+    private LikeUserService likeUserService;
 
     public LikesCleaner() {
         Thread updater = new Thread(this::updateLoop, "LikesTableCleaner");

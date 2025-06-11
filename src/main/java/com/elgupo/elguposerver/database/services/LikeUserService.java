@@ -4,6 +4,7 @@ import com.elgupo.elguposerver.database.models.GetLikeResponse;
 import com.elgupo.elguposerver.database.models.LikeUserEntry;
 import com.elgupo.elguposerver.database.models.LikeUserRequest;
 import com.elgupo.elguposerver.database.models.LikeUserResponse;
+import com.elgupo.elguposerver.database.repositories.LikeEventRepository;
 import com.elgupo.elguposerver.database.repositories.LikeUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +17,14 @@ import java.util.List;
 @Slf4j
 public class LikeUserService {
 
+    private final LikeUserRepository likeUserRepository;
+    private final LikeEventService likeEventService;
+
     @Autowired
-    private LikeUserRepository likeUserRepository;
+    public LikeUserService(LikeEventService likeEventService, LikeUserRepository likeUserRepository) {
+        this.likeEventService = likeEventService;
+        this.likeUserRepository = likeUserRepository;
+    }
 
     public LikeUserResponse likeUser(LikeUserRequest likeUserRequest) {
         log.debug("Like user request: {}", likeUserRequest);
@@ -30,7 +37,7 @@ public class LikeUserService {
         likeUserRepository.save(likeUserEntry);
         boolean match = likeUserRequest.isLiked() && getLike(likeUserRequest.getUserLikeableId(),
                 likeUserRequest.getLikerId(), likeUserRequest.getEventId()).isLiked() &&
-                new LikeEventService().getLikedEvents(likeUserRequest.getUserLikeableId()).contains(likeUserRequest.getEventId());
+                likeEventService.getLikedEvents(likeUserRequest.getUserLikeableId()).contains(likeUserRequest.getEventId());
         return new LikeUserResponse(
                 likeUserRequest.getLikerId(),
                 likeUserRequest.getUserLikeableId(),
