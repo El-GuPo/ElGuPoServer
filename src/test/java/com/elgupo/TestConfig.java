@@ -19,7 +19,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan(basePackages = {
     "com.elgupo.elguposerver.authentication.services",
     "com.elgupo.elguposerver.authentication.routes",
-    "com.elgupo.elguposerver.database.repositories"
+    "com.elgupo.elguposerver.database.repositories",
+        "com.elgupo.elguposerver.database.routes",
+        "com.elgupo.elguposerver.database.services"
 })
 public class TestConfig {
 
