@@ -22,6 +22,7 @@ public class TinderService {
         List<Long> users = likeEventService.getUsers(eventId);
         users = users.stream()
                 .filter(u -> !Objects.equals(u, mainUserId) && !likeUserService.wasDislike(u, mainUserId) && !likeUserService.wasDislike(mainUserId, u))
+                .filter(u -> !likeUserService.getLike(mainUserId, u, eventId).isExists())
                 .filter(u -> sex.isEmpty() || sex.equals(userRepository.findById(Math.toIntExact(u)).orElse(new User()).getSex()))
                 .filter(u -> minAge == null || minAge <= userRepository.findById(Math.toIntExact(u)).orElse(new User()).getAge())
                 .filter(u -> maxAge == null || maxAge >= userRepository.findById(Math.toIntExact(u)).orElse(new User()).getAge())
