@@ -27,9 +27,9 @@ public class TinderController {
     public List<User> getCandidatesList(
             @RequestParam Long mainUserId,
             @RequestParam Long eventId,
-            @RequestParam Integer minAge,
-            @RequestParam Integer maxAge,
-            @RequestParam String sex
+            @RequestParam(required = false) Integer minAge,
+            @RequestParam(required = false) Integer maxAge,
+            @RequestParam(required = false) String sex
     ) {
         return tinderService.getCandidates(mainUserId, eventId, minAge, maxAge, sex);
     }
