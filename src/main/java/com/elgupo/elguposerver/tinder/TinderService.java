@@ -86,13 +86,13 @@ public class TinderService {
         for (Integer cat : actualEvents.keySet()) {
             allEvents.addAll(actualEvents.get(cat));
         }
-        List<Event> likedEvents = new ArrayList<>();
+        Set<Event> likedEvents = new HashSet<>();
         for (Event event : allEvents) {
             if (eventsIds.contains((long) event.getId())) {
                 likedEvents.add(event);
             }
         }
         log.info("Likedevents is {}", likedEvents);
-        return likedEvents;
+        return new ArrayList<>(likedEvents);
     }
 }
