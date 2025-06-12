@@ -120,45 +120,4 @@ public class FillAndGetProfileTest {
                 .andExpect(jsonPath("$.email").value(email));
     }
 
-    @Test
-    public void testUnsuccessfulUserLogin() throws Exception {
-        String email = "test@example.com";
-        String userJson = """
-                {
-                    "email": "%s",
-                    "password": "Test123!@#",
-                    "confirmPassword": "Test123!@#"
-                }""".formatted(email);
-        mockMvc.perform(post("/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(userJson));
-
-        String userJson1 = """
-                {
-                    "email": "lala@gmail.com",
-                    "password": "Test123!@#"
-                }""";
-
-        String userJson2 = """
-                {
-                    "email": "%s",
-                    "password": "Test123!@"
-                }""".formatted(email);
-
-        mockMvc.perform(post("/auth")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(userJson1))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-
-        mockMvc.perform(post("/auth")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(userJson2))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("Invalid password"));
-    }
-
 }

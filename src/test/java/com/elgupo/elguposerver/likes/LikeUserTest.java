@@ -89,4 +89,208 @@ public class LikeUserTest {
 
     }
 
+    @Test
+    public void testWasDislike() throws Exception {
+        String userJson = """
+                {
+                    "likerId": 1,
+                    "userLikeableId": 2,
+                    "eventId": 3,
+                    "liked": false
+                }""";
+
+        mockMvc.perform(post("/like_user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson));
+
+        mockMvc.perform(get("/like_users/get_dislike?user1=1&user2=2"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+
+        mockMvc.perform(get("/like_users/get_dislike?user1=2&user2=1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+
+        mockMvc.perform(get("/like_users/get_dislike?user1=3&user2=1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("false"));
+    }
+
+    @Test
+    public void testGetLikes() throws Exception {
+        String userJson = """
+                {
+                    "likerId": 1,
+                    "userLikeableId": 2,
+                    "eventId": 3,
+                    "liked": true
+                }""";
+        String userJson1 = """
+                {
+                    "likerId": 1,
+                    "userLikeableId": 5,
+                    "eventId": 3,
+                    "liked": true
+                }""";
+        String userJson2 = """
+                {
+                    "likerId": 1,
+                    "userLikeableId": 7,
+                    "eventId": 3,
+                    "liked": false
+                }""";
+        String userJson3 = """
+                {
+                    "likerId": 1,
+                    "userLikeableId": 9,
+                    "eventId": 3,
+                    "liked": false
+                }""";
+        mockMvc.perform(post("/like_user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson));
+
+        mockMvc.perform(post("/like_user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson1));
+
+        mockMvc.perform(post("/like_user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson2));
+
+        mockMvc.perform(post("/like_user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson3));
+
+        mockMvc.perform(get("/like_users/get_likes?user=1&event=3&like=true"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("[2,5]"));
+
+        mockMvc.perform(get("/like_users/get_likes?user=1&event=3&like=false"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("[7,9]"));
+
+        mockMvc.perform(get("/like_users/get_likes?user=1&event=5&like=false"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+        String userJson = """
+                {
+                    "likerId": 1,
+                    "userLikeableId": 2,
+                    "eventId": 3,
+                    "liked": true
+                }""";
+        String userJson1 = """
+                {
+                    "likerId": 1,
+                    "userLikeableId": 5,
+                    "eventId": 3,
+                    "liked": true
+                }""";
+        String userJson2 = """
+                {
+                    "likerId": 1,
+                    "userLikeableId": 7,
+                    "eventId": 3,
+                    "liked": false
+                }""";
+        String userJson3 = """
+                {
+                    "likerId": 1,
+                    "userLikeableId": 9,
+                    "eventId": 3,
+                    "liked": false
+                }""";
+        mockMvc.perform(post("/like_user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson));
+
+        mockMvc.perform(post("/like_user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson1));
+
+        mockMvc.perform(post("/like_user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson2));
+
+        mockMvc.perform(post("/like_user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson3));
+
+        mockMvc.perform(delete("/like_users/delete/3"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+
+        mockMvc.perform(delete("/like_users/delete/4"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("false"));
+
+        mockMvc.perform(delete("/like_users/delete/3"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("false"));
+
+        mockMvc.perform(get("/like_users/get_likes?user=1&event=3&like=true"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
+
+        mockMvc.perform(get("/like_users/get_likes?user=1&event=3&like=false"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
+    }
+
+    @Test
+    public void testDistinctEvents() throws Exception {
+        String userJson = """
+                {
+                    "likerId": 1,
+                    "userLikeableId": 2,
+                    "eventId": 3,
+                    "liked": true
+                }""";
+        String userJson1 = """
+                {
+                    "likerId": 1,
+                    "userLikeableId": 5,
+                    "eventId": 4,
+                    "liked": true
+                }""";
+        String userJson2 = """
+                {
+                    "likerId": 1,
+                    "userLikeableId": 7,
+                    "eventId": 3,
+                    "liked": false
+                }""";
+        String userJson3 = """
+                {
+                    "likerId": 1,
+                    "userLikeableId": 9,
+                    "eventId": 9,
+                    "liked": false
+                }""";
+        mockMvc.perform(post("/like_user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson));
+
+        mockMvc.perform(post("/like_user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson1));
+
+        mockMvc.perform(post("/like_user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson2));
+
+        mockMvc.perform(post("/like_user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson3));
+
+        mockMvc.perform(get("/like_users/distinct_events"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("[3,4,9]"));
+    }
+
 }
