@@ -36,9 +36,10 @@ public class PostRequester {
         for (Category cat : Category.CATEGORIES) {
             result.put(cat.getId(), new ArrayList<>());
         }
+        result.put(-1, new ArrayList<>());
         for (Place place : data) {
             for (Event event : place.getEvents()) {
-                if (!result.containsKey(event.getCatId())) continue;
+                if (!result.containsKey(event.getCatId())) result.get(-1).add(event);
                 result.get(event.getCatId()).add(event);
             }
         }
