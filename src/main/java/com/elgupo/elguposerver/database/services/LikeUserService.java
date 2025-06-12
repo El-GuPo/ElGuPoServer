@@ -28,16 +28,23 @@ public class LikeUserService {
 
     public LikeUserResponse likeUser(LikeUserRequest likeUserRequest) {
         log.debug("Like user request: {}", likeUserRequest);
+
         LikeUserEntry likeUserEntry = new LikeUserEntry(
-                likeUserRequest.getLikerId(),
                 likeUserRequest.getUserLikeableId(),
                 likeUserRequest.getEventId(),
+                likeUserRequest.getLikerId(),
                 likeUserRequest.isLiked()
         );
+
         likeUserRepository.save(likeUserEntry);
-        boolean match = likeUserRequest.isLiked() && getLike(likeUserRequest.getUserLikeableId(),
-                likeUserRequest.getLikerId(), likeUserRequest.getEventId()).isLiked() &&
-                likeEventService.getLikedEvents(likeUserRequest.getUserLikeableId()).contains(likeUserRequest.getEventId());
+
+        boolean match = likeUserRequest.isLiked() &&
+                getLike(likeUserRequest.getUserLikeableId(),
+                        likeUserRequest.getLikerId(),
+                        likeUserRequest.getEventId()).isLiked() &&
+                likeEventService.getLikedEvents(likeUserRequest.getUserLikeableId())
+                        .contains(likeUserRequest.getEventId());
+
         return new LikeUserResponse(
                 likeUserRequest.getLikerId(),
                 likeUserRequest.getUserLikeableId(),

@@ -45,4 +45,48 @@ public class LikeUserTest {
                 .andExpect(jsonPath("$.match").value(false));
     }
 
+    @Test
+    public void testGetLike() throws Exception {
+        String userJson = """
+                {
+                    "likerId": 1,
+                    "userLikeableId": 2,
+                    "eventId": 3,
+                    "liked": true
+                }""";
+        String userJson1 = """
+                {
+                    "likerId": 1,
+                    "userLikeableId": 3,
+                    "eventId": 3,
+                    "liked": false
+                }""";
+        mockMvc.perform(post("/like_user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson));
+
+        mockMvc.perform(post("/like_user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson1));
+
+        mockMvc.perform(get("/like_users/get_like?likerId=1&likeableId=2&eventId=3"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.exists").value(true))
+                .andExpect(jsonPath("$.liked").value(true));
+
+        mockMvc.perform(get("/like_users/get_like?likerId=1&likeableId=3&eventId=3"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.exists").value(true))
+                .andExpect(jsonPath("$.liked").value(false));
+
+        mockMvc.perform(get("/like_users/get_like?likerId=1&likeableId=7&eventId=3"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.exists").value(false))
+                .andExpect(jsonPath("$.liked").value(false));
+
+    }
+
 }
