@@ -24,13 +24,11 @@ public class LikeUserController {
 
     @PostMapping("/like_user")
     public ResponseEntity<LikeUserResponse> likeUser(@RequestBody LikeUserRequest likeUserRequest) {
-        likeUserService.likeUser(likeUserRequest);
         return ResponseEntity.ok(likeUserService.likeUser(likeUserRequest));
     }
 
     @GetMapping("/like_users/get_like")
     public ResponseEntity<GetLikeResponse> getLike(@RequestParam Long likerId, @RequestParam Long likeableId, @RequestParam Long eventId) {
-        //likeUserService.getLike(likerId, likeableId, eventId);
         return ResponseEntity.ok(likeUserService.getLike(likerId, likeableId, eventId));
     }
 
