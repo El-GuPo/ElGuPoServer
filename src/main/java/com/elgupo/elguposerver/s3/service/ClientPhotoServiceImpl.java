@@ -4,15 +4,11 @@ import com.elgupo.elguposerver.s3.exceptions.BadRequestException;
 import com.elgupo.elguposerver.s3.exceptions.InternalServerException;
 import com.elgupo.elguposerver.s3.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.awscore.exception.AwsServiceException;
-import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
@@ -62,23 +58,16 @@ public class ClientPhotoServiceImpl implements ClientPhotoService {
 
     @Override
     public URL getPhoto(Long userID) throws NotFoundException {
-        /*
-            Need validator, everybody can get photo
-         */
-        String key = getPath(userID);
-        try{
+        try {
             s3Client.headObject(builder -> builder.bucket(BUCKET).key(getPath(userID)));
             return createPresignedGetURL(getPath(userID));
-        } catch(NoSuchKeyException e){
+        } catch (NoSuchKeyException e) {
             throw new NotFoundException("Photo not found for user: " + userID);
         }
     }
 
     @Override
     public URL uploadPhoto(Long userId, MultipartFile photo) throws IOException {
-        /*
-            Need validator user should be able to put photo
-         */
         validateFile(photo);
         String key = getPath(userId);
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -92,10 +81,6 @@ public class ClientPhotoServiceImpl implements ClientPhotoService {
 
     @Override
     public boolean deletePhoto(Long userID) throws InternalServerException {
-        /*
-            Need validator, same validation as in put
-         */
-
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(BUCKET)
                 .key(getPath(userID))
@@ -112,7 +97,7 @@ public class ClientPhotoServiceImpl implements ClientPhotoService {
         }
     }
 
-    private void validateFile(MultipartFile file) throws BadRequestException{
+    private void validateFile(MultipartFile file) throws BadRequestException {
         if (file.getContentType() == null || !file.getContentType().startsWith("image/")) {
             throw new BadRequestException("Invalid file");
         }
